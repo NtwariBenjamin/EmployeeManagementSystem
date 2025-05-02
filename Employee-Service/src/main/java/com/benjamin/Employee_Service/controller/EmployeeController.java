@@ -6,6 +6,7 @@ import com.benjamin.Employee_Service.model.department.DepartmentAnalyticsRespons
 import com.benjamin.Employee_Service.model.employee.EmployeeRequest;
 import com.benjamin.Employee_Service.model.employee.EmployeeResponse;
 import com.benjamin.Employee_Service.model.employee.EmployeesResponse;
+import com.benjamin.Employee_Service.model.user.Role;
 import com.benjamin.Employee_Service.model.user.User;
 import com.benjamin.Employee_Service.service.AuthClient;
 import com.benjamin.Employee_Service.service.DepartmentClient;
@@ -38,35 +39,53 @@ public class EmployeeController {
     private DepartmentClient departmentClient;
 
     @PostMapping("/register")
-    @Operation(summary = "Register an employee", description = "Registers a new employee with linked user and department")
+    @Operation(summary = "Register an employee", description = "Registers a new employee with linked user and department. Only managers can register employees.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Employee registered successfully"),
+            @ApiResponse(responseCode = "403", description = "Only managers can register employees"),
             @ApiResponse(responseCode = "404", description = "User or Department not found"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-    public ResponseEntity<EmployeeResponse> registerEmployee(@RequestBody EmployeeRequest employeeRequest) {
-        Long departmentId = employeeRequest.getDepartmentId();
-        Department department = departmentClient.getDepartmentDetails(departmentId);
-        if (department == null || department.getId() == null) {
-            log.warn("Department Not Found with departmentId {}", departmentId);
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(EmployeeResponse.builder()
-                    .message("Department Not Found!")
-                    .build());
-        }
-
-        Long userId = employeeRequest.getUserId();
-        User user = authClient.getUserDetails(userId);
-        if (user == null || user.getId() == null) {
-            log.warn("Employee Not Found with userId {}", userId);
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(EmployeeResponse.builder()
-                    .message("Employee Not Found!")
-                    .build());
-        }
-
+    public ResponseEntity<EmployeeResponse> registerEmployee(
+            @RequestHeader("Authorization") String token,
+            @RequestBody EmployeeRequest employeeRequest) {
+        
         try {
+
+            User requestingUser = authClient.validateTokenAndGetUser(token);
+            if (requestingUser.getRole() != Role.MANAGER) {
+                log.warn("Unauthorized attempt to register employee by user: {}", requestingUser.getUsername());
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(EmployeeResponse.builder()
+                        .message("Only managers can register employees")
+                        .build());
+            }
+
+            Long departmentId = employeeRequest.getDepartmentId();
+            Department department = departmentClient.getDepartmentDetails(departmentId);
+            if (department == null || department.getId() == null) {
+                log.warn("Department Not Found with departmentId {}", departmentId);
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(EmployeeResponse.builder()
+                        .message("Department Not Found!")
+                        .build());
+            }
+
+            Long userId = employeeRequest.getUserId();
+            User user = authClient.getUserDetails(userId);
+            if (user == null || user.getId() == null) {
+                log.warn("Employee Not Found with userId {}", userId);
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body(EmployeeResponse.builder()
+                        .message("Employee Not Found!")
+                        .build());
+            }
+
             log.info("Registering employee with request {}", employeeRequest);
             EmployeeResponse employeeResponse = employeeService.registerEmployee(user, department, employeeRequest);
             return ResponseEntity.ok(employeeResponse);
+        } catch (IllegalArgumentException e) {
+            log.error("Invalid token or unauthorized access", e);
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(EmployeeResponse.builder()
+                    .message("Invalid token or unauthorized access")
+                    .build());
         } catch (Exception e) {
             log.error("Error registering Employee with request {}", employeeRequest, e);
             return ResponseEntity.internalServerError().build();
