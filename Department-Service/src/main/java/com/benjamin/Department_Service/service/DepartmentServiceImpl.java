@@ -14,11 +14,12 @@ import java.util.Optional;
 
 @Service
 @Slf4j
-public class DepartmentService {
+public class DepartmentServiceImpl implements DepartmentService{
 
     @Autowired
     private DepartmentRepository departmentRepository;
 
+    @Override
     public DepartmentResponse createDepartment(DepartmentRequest departmentRequest) {
         Optional<Department> departmentOptional = departmentRepository.findByName(departmentRequest.getName());
         if (departmentOptional.isPresent()) {
@@ -39,6 +40,7 @@ public class DepartmentService {
                 .build();
     }
 
+    @Override
     public DepartmentResponse getDepartmentByName(String departmentName) {
         Department department = findDepartmentByNameOrThrow(departmentName);
         return DepartmentResponse.builder()
@@ -47,6 +49,7 @@ public class DepartmentService {
                 .build();
     }
 
+    @Override
     public DepartmentResponse getDepartmentById(Long departmentId) {
         Department department = findDepartmentByIdOrThrow(departmentId);
         return DepartmentResponse.builder()
@@ -55,11 +58,13 @@ public class DepartmentService {
                 .build();
     }
 
+    @Override
     public List<Department> getAllDepartments() {
         log.info("Fetching All Departments!");
         return departmentRepository.findAll();
     }
 
+    @Override
     public DepartmentResponse updateDepartment(String departmentName, DepartmentRequest departmentRequest) {
         Department updatedDepartment = findDepartmentByNameOrThrow(departmentName);
         updatedDepartment.setName(departmentRequest.getName());
@@ -72,6 +77,7 @@ public class DepartmentService {
                 .build();
     }
 
+    @Override
     public DepartmentResponse deleteDepartmentById(Long departmentId) {
         Department department = findDepartmentByIdOrThrow(departmentId);
         departmentRepository.deleteById(departmentId);
@@ -80,7 +86,6 @@ public class DepartmentService {
                 .message("Department with ID: " + departmentId + " Deleted Successfully!")
                 .build();
     }
-
 
     private Department findDepartmentByNameOrThrow(String departmentName) {
         return departmentRepository.findByName(departmentName)

@@ -2,9 +2,9 @@ package com.benjamin.Department_Service.controller;
 
 import com.benjamin.Department_Service.exception.DepartmentNotFoundException;
 import com.benjamin.Department_Service.model.Department;
-import com.benjamin.Department_Service.model.DepartmentRequest;
-import com.benjamin.Department_Service.model.DepartmentResponse;
-import com.benjamin.Department_Service.service.DepartmentService;
+import com.benjamin.Department_Service.Dto.Department.DepartmentRequest;
+import com.benjamin.Department_Service.Dto.Department.DepartmentResponse;
+import com.benjamin.Department_Service.service.DepartmentServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -23,7 +23,7 @@ import java.util.List;
 public class DepartmentController {
 
     @Autowired
-    private DepartmentService departmentService;
+    private DepartmentServiceImpl departmentService;
 
     @PostMapping("/create")
     @Operation(summary = "Create department", description = "Adds a new department")
