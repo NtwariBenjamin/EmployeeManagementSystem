@@ -29,10 +29,12 @@ public class AuthClient {
         if (userId == null) {
             throw new IllegalArgumentException("User Not Found!");
         }
+
         String url = UriComponentsBuilder
                 .fromHttpUrl(authenticationUrl)
                 .pathSegment("auth", "user", "id", String.valueOf(userId))
                 .toUriString();
+
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + jwtService.generateTokenForService());
         HttpEntity<String> entity = new HttpEntity<>(headers);
@@ -49,6 +51,11 @@ public class AuthClient {
             throw new IllegalArgumentException("Invalid token");
         }
 
+
+        if (!token.startsWith("Bearer ")) {
+            token = "Bearer " + token;
+        }
+
         String url = UriComponentsBuilder
                 .fromHttpUrl(authenticationUrl)
                 .pathSegment("auth", "validate-token")
@@ -61,11 +68,11 @@ public class AuthClient {
         log.info("Validating token with URL: {}", url);
         ResponseEntity<UserResponse> response = restTemplate.exchange(
                 url, HttpMethod.GET, entity, UserResponse.class);
-        
+
         if (response.getBody() == null || response.getBody().getUser() == null) {
             throw new IllegalArgumentException("Invalid token or user not found");
         }
-        
+
         return response.getBody().getUser();
     }
 }

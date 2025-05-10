@@ -1,4 +1,4 @@
-package com.benjamin.Employee_Service.model.department;
+package com.benjamin.Employee_Service.dto.department;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

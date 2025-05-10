@@ -1,8 +1,9 @@
 package com.benjamin.Employee_Service.controller;
 
+import com.benjamin.Employee_Service.dto.department.DepartmentAnalyticsResponse;
 import com.benjamin.Employee_Service.exception.UserNotFoundException;
 import com.benjamin.Employee_Service.model.department.Department;
-import com.benjamin.Employee_Service.model.department.DepartmentAnalyticsResponse;
+
 import com.benjamin.Employee_Service.model.employee.EmployeeRequest;
 import com.benjamin.Employee_Service.model.employee.EmployeeResponse;
 import com.benjamin.Employee_Service.model.employee.EmployeesResponse;
@@ -10,7 +11,7 @@ import com.benjamin.Employee_Service.model.user.Role;
 import com.benjamin.Employee_Service.model.user.User;
 import com.benjamin.Employee_Service.service.AuthClient;
 import com.benjamin.Employee_Service.service.DepartmentClient;
-import com.benjamin.Employee_Service.service.EmployeeService;
+import com.benjamin.Employee_Service.service.EmployeeServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -30,7 +31,7 @@ import java.util.List;
 @Slf4j
 public class EmployeeController {
     @Autowired
-    private EmployeeService employeeService;
+    private EmployeeServiceImpl employeeService;
 
     @Autowired
     private AuthClient authClient;

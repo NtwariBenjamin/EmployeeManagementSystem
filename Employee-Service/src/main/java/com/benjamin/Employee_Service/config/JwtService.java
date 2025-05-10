@@ -76,7 +76,7 @@ public class JwtService {
         claims.put("role", "SERVICE");
         return Jwts.builder()
                 .setClaims(claims)
-                .setSubject("EmployeeService")
+                .setSubject("EmployeeServiceImpl")
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + jwtExpirationInMs))
                 .signWith(SignatureAlgorithm.HS256, Keys.hmacShaKeyFor(secretKey.getBytes()))

@@ -1,8 +1,9 @@
 package com.benjamin.Employee_Service.service;
 
 import com.benjamin.Employee_Service.config.JwtService;
+import com.benjamin.Employee_Service.dto.department.DepartmentResponse;
 import com.benjamin.Employee_Service.model.department.Department;
-import com.benjamin.Employee_Service.model.department.DepartmentResponse;
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

@@ -1,5 +1,6 @@
-package com.benjamin.Department_Service.model;
+package com.benjamin.Department_Service.Dto.Department;
 
+import com.benjamin.Department_Service.model.Department;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
